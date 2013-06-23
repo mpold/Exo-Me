@@ -1,0 +1,237 @@
+#!/usr/bin/perl -w
+use 5.006;
+use strict;
+use warnings;
+
+
+# The below modules are the 5 Perl modules I use routinely
+
+use File::Find;
+use File::Copy;
+use File::Path;
+use File::Basename;
+use File::Spec;
+
+
+# Step1: Write the ESP6503 entries that contain indels into a separate files
+
+opendir (DIR, "Your_Directory") or die "$!";
+my @files = grep {/\.txt$/}  readdir DIR; # files that contain the .txt extension form an array, which is grepped 
+close DIR;
+
+foreach my $file (@files) {
+   open(IN1,"Your_Directory/$file") or die "$!";
+   open(OUT1,">>Your_Directory/ALL_ESP6503_INDELS.txt") or die "$!";
+   
+     
+select(OUT1);
+   
+  while (<IN1>){
+	
+# The input files contain both point mutations (SNV - missense, nonsense, synonymous) as well as indels
+# All SNV are described as a reference base substituted for by another base. For example A/T, C/G etc.
+# The below regex tells the entries that contains SNV apart from Indels
+# Only the entries that don't contain SNV are printed out by the below 'print $_ unless...' command
+# Please do not delete the white spaces in the below print command
+## These white spaces serve as delimiters in the input files. Without them the script won't work
+# Change fail names as you please
+# Make sure you enter a directory name wherever it says 'Your_Directory'
+	
+	
+	print $_ unless m/( A\/C | A\/G | A\/T | C\/A | C\/G | C\/T | G\/A | G\/C | G\/T | T\/A | T\/C | T\/G )/;
+}
+
+close(IN1);
+close(OUT1);
+}
+
+#########################################################################################################################
+# 
+#Step2: Prints out the Chromosomal position and description of Indel in each ESP6503 indel entry
+open(IN2,"Your_Directory/ALL_ESP6503_INDELS.txt") or die "$!";
+open(OUT2,">>Your_Directory/Element_0_3_Indels.txt") or die "$!";
+   
+    
+   select(OUT2);
+ 
+	while (<IN2>){
+   
+		my @INDEL = split / /; # split lines (arrays) by white space, the delimiter in ESP_6503 downloads and splits thereof
+
+
+# print out the very first and fourth array element
+## $INDEL[0] prints out the chromosomal coordinate (position) entry
+## $INDEL[3] prints out the reference->indel entry
+## The print-out contains redundancy, which is eliminated in subsequent steps
+### The redundancy in ESP_6053 in regard to the chromosomal position/variant is due to genes producing multiple different transcripts
+## The [0] and [3] elements are separated by comma in the printout
+ 
+   print "$INDEL[0],$INDEL[3]\n";
+
+}
+
+close(IN2);
+close(OUT2);
+
+###############################################################
+
+# Step3: Eliminate redundancy in $INDEL[0],$INDEL[3] print-out
+
+open(IN3,"Your_Directory/Element_0_3_Indels.txt") or die "$!";
+open(OUT3,">>Your_Directory/Unique_0_3_Indels.txt") or die "$!"; 
+
+select(OUT3);
+
+	my %seen;
+
+		while (<IN3>){
+
+	print if $seen{$_}++ == 0; # prints out single lines; if duplicate, triplicate etc lines are needed use == 1, == 2 etc, respectively
+
+}
+
+close(IN3);
+close(OUT3);
+
+####################################################################
+
+# Step4: Print out chromosomal coordinates of all indels in ESP_6503
+
+open(IN4,"Your_Directory/Unique_0_3_Indels.txt") or die "$!";
+open(OUT4,">>Your_Directory/INDEL_Chromosome_Position.txt") or die "$!";
+   
+    
+   select(OUT4);
+   
+	while (<IN4>){
+   
+		my @INDEL = split /\,/; # split lines (arrays) by white space
+
+	print " $INDEL[0]\n";
+
+}
+
+close(IN4);
+close(OUT4);
+
+##################################################################################
+
+# Step5: Eliminate redundancy in chromosomal positions to which an indel is mapped
+## Needed because different indels can map to the same chromosomal position
+## This step may or may not produce fewer number of entries than in the print-out of the previous step
+
+open(IN5,"Your_Directory/INDEL_Chromosome_Position.txt") or die "$!";
+open(OUT5,">>Your_Directory/UNIQUE_INDEL_Chromosome_Position.txt") or die "$!"; 
+
+select(OUT5);
+
+	my %seen_1;
+
+		while (<IN5>){
+
+	print if $seen_1{$_}++ == 0; # prints out single lines; if duplicate, triplicate etc lines are needed use == 1, == 2 etc, respectively
+
+}
+
+close(IN5);
+close(OUT5);
+
+##################################################################
+
+# Step6: Count the number of unique indel positions per chromosome
+
+open (IN6,"Your_Directory/UNIQUE_INDEL_Chromosome_Position.txt") or die "can't open the input file";
+open (OUT6,">>Your_Directory/INDEL_Summary_by_Chromosome.csv") or die "can't open output file";
+
+select (OUT6);
+	
+my $Chrom_1 = 0;
+my $Chrom_2 = 0;
+my $Chrom_3 = 0;
+my $Chrom_4 = 0;
+my $Chrom_5 = 0;
+my $Chrom_6 = 0;
+my $Chrom_7 = 0;
+my $Chrom_8 = 0;
+my $Chrom_9 = 0;
+my $Chrom_10 = 0;
+my $Chrom_11 = 0;
+my $Chrom_12 = 0;
+my $Chrom_13 = 0;
+my $Chrom_14 = 0;
+my $Chrom_15 = 0;
+my $Chrom_16 = 0;
+my $Chrom_17 = 0;
+my $Chrom_18 = 0;
+my $Chrom_19 = 0;
+my $Chrom_20 = 0;
+my $Chrom_21 = 0;
+my $Chrom_22 = 0;
+my $Chrom_X = 0;
+my $Chrom_Y = 0;
+
+
+while(<IN6>){
+
+
+$Chrom_1++ if $_ =~ m/ 1:/g;
+$Chrom_2++ if $_ =~ m/ 2:/g;
+$Chrom_3++ if $_ =~ m/ 3:/g;
+$Chrom_4++ if $_ =~ m/ 4:/g;
+$Chrom_5++ if $_ =~ m/ 5:/g;
+$Chrom_6++ if $_ =~ m/ 6:/g;
+$Chrom_7++ if $_ =~ m/ 7:/g;
+$Chrom_8++ if $_ =~ m/ 8:/g;
+$Chrom_9++ if $_ =~ m/ 9:/g;
+$Chrom_10++ if $_ =~ m/ 10:/g;
+$Chrom_11++ if $_ =~ m/ 11:/g;
+$Chrom_12++ if $_ =~ m/ 12:/g;
+$Chrom_13++ if $_ =~ m/ 13:/g;
+$Chrom_14++ if $_ =~ m/ 14:/g;
+$Chrom_15++ if $_ =~ m/ 15:/g;
+$Chrom_16++ if $_ =~ m/ 16:/g;
+$Chrom_17++ if $_ =~ m/ 17:/g;
+$Chrom_18++ if $_ =~ m/ 18:/g;
+$Chrom_19++ if $_ =~ m/ 19:/g;
+$Chrom_20++ if $_ =~ m/ 20:/g;
+$Chrom_21++ if $_ =~ m/ 21:/g;
+$Chrom_22++ if $_ =~ m/ 22:/g;
+$Chrom_X++ if $_ =~ m/ X:/g;
+$Chrom_Y++ if $_ =~ m/ Y:/g;
+
+
+}
+
+print "Chrom_1,$Chrom_1\n";
+print "Chrom_2,$Chrom_2\n";
+print "Chrom_3,$Chrom_3\n";
+print "Chrom_4,$Chrom_4\n";
+print "Chrom_5,$Chrom_5\n";
+print "Chrom_6,$Chrom_6\n";
+print "Chrom_7,$Chrom_7\n";
+print "Chrom_8,$Chrom_8\n";
+print "Chrom_9,$Chrom_9\n";
+print "Chrom_10,$Chrom_10\n";
+print "Chrom_11,$Chrom_11\n";
+print "Chrom_12,$Chrom_12\n";
+print "Chrom_13,$Chrom_13\n";
+print "Chrom_14,$Chrom_14\n";
+print "Chrom_15,$Chrom_15\n";
+print "Chrom_16,$Chrom_16\n";
+print "Chrom_17,$Chrom_17\n";
+print "Chrom_18,$Chrom_18\n";
+print "Chrom_19,$Chrom_19\n";
+print "Chrom_20,$Chrom_20\n";
+print "Chrom_21,$Chrom_21\n";
+print "Chrom_22,$Chrom_22\n";
+print "Chrom_X,$Chrom_X\n";
+print "Chrom_Y,$Chrom_Y\n";
+
+
+close (IN6);
+close (OUT6);
+
+
+
+
+

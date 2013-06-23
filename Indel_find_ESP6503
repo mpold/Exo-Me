@@ -45,7 +45,7 @@ close(IN1);
 close(OUT1);
 }
 
-#########################################################################################################################
+###################################################################
 # 
 #Step2: Prints out the Chromosomal position and description of Indel in each ESP6503 indel entry
 open(IN2,"Your_Directory/ALL_ESP6503_INDELS.txt") or die "$!";

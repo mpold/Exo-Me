@@ -1,4 +1,4 @@
 Exo-Me
 ======
 
-Finds INDEL entries in Human Exome Project FTP downloads
+Collection of scripts to analyze genetic information from human exome and genome

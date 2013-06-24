@@ -1,0 +1,67 @@
+#!/usr/bin/perl -w
+use 5.006;
+use strict;
+use warnings;
+
+# The below 5 modules are routinely present in my perl-scripts
+# They may or may not be necessary in the scripts I write
+
+use File::Find;
+use File::Copy;
+use File::Path;
+use File::Basename;
+use File::Spec;
+
+### TIPS ###
+
+#1. Input file must contain a single line of letters
+#2. Chomp input if multiple lines. Get rid of the \r and \n
+#3. I use this script to print out DNA sequences at and around positions on chromosomes
+#4. Below scripts prints out a 9-nucleotide motif in chromosome 1 starting from position 985951
+#4.1. Input -- entire chromosome 1 sequence -- needs to be in a separate file
+#4.2. I use ftp://ftp.ncbi.nlm.nih.gov/genbank/genomes/Eukaryotes/vertebrates_mammals/Homo_sapiens/GRCh37/Primary_Assembly/assembled_chromosomes/FASTA/ to download human chromosome sequences
+
+#5. Position 985951 in chromosome 1 is defined as position 985950 in this script because for perl, position 1 = 0, 2 = 1 etc
+#6. Use letters, abbreviations and alphanumeric combinations to define variables
+#6.1. Variables defined just numerically will disable this script
+
+#7. This script prints out a 9-character string from a single line of characters
+#8. The 'substr' function works much faster than the 'split' function
+#8.1 Syntax: substr($_, x, y), where (x + y) =< z, where z = number of letters in $_
+
+#9. Each 'x' must be declared separately
+#10. Each 'x' needs a separate 'print' command
+#11. I have tested script ~4600 with different 'x' in the same scripts - works fine and fast
+#11.1 The amount of different 'x' (variables, print-commands) one can put into this script unknown at this point
+#11.2 Since ~4,600 variables and print-commands worked extremely fast then I think that one can go well over 100,000 different variables put into this script and still have a decent script speed. I am using 8 Gig of RAM, 1 TB of hard drive and quad i7 processor
+
+#12. The scripts itself starts below with the 'open (IN,...' line, which opens the input for perl
+
+
+open (IN,"Paste your input directory and file name here!") or die "can't open the input file";
+open (OUT,">>Paste your output directory and file name here!") or die "can't open output file";
+
+# Don’t forget that perl likes the Unix style ‘/’ instead of Windows style ‘\’ in paths
+
+select (OUT);
+
+  while (<IN>) {
+
+		my $Chrom_1 = $_;
+# defines entire chromosome 1 in the input file as a single line of letters
+
+		
+my $Pos_1_Chrom_1 = substr($_, 985950, 9);
+		# syntax: substr($_, x, y), where (x + y) =< z, where z = number of letters in $_
+		# modify the 'x' and 'y' as needed
+# x = 985950 = position 985951 on human chromosome 1
+# y = 9 = nucleotides 985951-985959 on human chromosome 1
+
+
+		print "$Pos_1_Chrom_1\n";
+		# print output as defined by the variables found in input
+
+}
+
+close (IN);
+close (OUT);

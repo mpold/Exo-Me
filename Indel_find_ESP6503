@@ -105,7 +105,7 @@ open(OUT4,">>Your_Directory/INDEL_Chromosome_Position.txt") or die "$!";
    
 	while (<IN4>){
    
-		my @INDEL = split /\,/; # split lines (arrays) by white space
+		my @INDEL = split / /; # split lines (arrays) by white space
 
 	print " $INDEL[0]\n";
 

@@ -38,7 +38,7 @@ select(OUT1);
 # Make sure you enter a directory name wherever it says 'Your_Directory'
 	
 	
-	print $_ unless m/( A\/C | A\/G | A\/T | C\/A | C\/G | C\/T | G\/A | G\/C | G\/T | T\/A | T\/C | T\/G )/;
+	print $_ unless m/ \w{1}\/\w{1} | \w{1}\/\w{1}\/\w{1} | \w{1}\/\w{1}\/\w{1}\/w{1} /;
 }
 
 close(IN1);
@@ -64,9 +64,9 @@ open(OUT2,">>Your_Directory/Element_0_3_Indels.txt") or die "$!";
 ## $INDEL[3] prints out the reference->indel entry
 ## The print-out contains redundancy, which is eliminated in subsequent steps
 ### The redundancy in ESP_6053 in regard to the chromosomal position/variant is due to genes producing multiple different transcripts
-## The [0] and [3] elements are separated by comma in the printout
+## The [0] and [3] elements are separated by white space in the printout
  
-   print "$INDEL[0],$INDEL[3]\n";
+   print " $INDEL[0] $INDEL[3] \n";
 
 }
 

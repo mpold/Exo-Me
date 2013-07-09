@@ -1,0 +1,168 @@
+#!/usr/bin/perl -w
+use 5.006;
+use strict;
+use warnings;
+
+use File::Find;
+use File::Copy;
+use File::Path;
+use File::Basename;
+use File::Spec;
+
+
+
+# Use this script to break down COSMIC
+# Each unique entry in every category of COSMIC can be found by this script
+# Get both redundant and non-redundant lists of data in each COSIC category
+# Customize this script as needed using the $ELEMENT-key
+# The below list, the $ELEMENT-key: [0]..[24] contains all COSMIC data-categories in 'CosmicCompleteExport_v65_200513.tsv'
+# All future COSMIC updates can be quickly broken down into single elements as well
+# The same basic script can be used on other databases as well. Just change the category names, and adjust the $i-values appropriately
+
+
+#### THE $ELEMENT-KEY ####
+
+#[0] Gene name
+#[1] Accession Number
+#[2] HGNC ID
+#[3] Sample name
+#[4] ID_sample
+#[5] ID_tumour
+#[6] Primary site
+#[7] Site subtype
+#[8] Primary histology
+#[9] Histology subtype
+#[10] Genome-wide screen
+#[11] Mutation ID
+#[12] Mutation CDS
+#[13] Mutation AA
+#[14] Mutation Description
+#[15] Mutation zygosity
+#[16] Mutation NCBI36 genome position
+#[17] Mutation NCBI36 strand
+#[18] Mutation GRCh37 genome position
+#[19] Mutation GRCh37 strand
+#[20] Mutation somatic status
+#[21] Pubmed_PMID
+#[22] Sample source
+#[23] Tumour origin
+#[24] Comments
+
+
+##### VARIABLES #####: change directory names as needed
+# Add more variables as needed
+# Define any file extension that perl can handle
+# Add more file handling capacities on top of this script as needed
+
+# Enter your input directory in single quotes of my $Element_Input = ''
+# Enter your output directory in single quotes of my $Element_Output = ''
+
+my $Element_Input = 'C:/COSMIC/COSMIC_DOWNLOAD_06272013/';
+my $Element_Output = 'C:/COSMIC/TEST/';
+my $txt = '.txt';
+my $csv = '.csv';
+my $NR = 'NR_';
+
+
+
+# $i = every number listed in square brackets in the $ELEMENT key
+# You can use a continuous range of $i other than 0..24. For example, (my $i=5; $i <=7; $i++) produces the 'ID_tumour', 'Primary site', and 'Site subtype' data only
+# If you need the list(s) of just a single COSMIC-category only then us (my $i=n; $i <= n, $i++), where n = any number in the $ELEMENT-key
+
+
+# STEP1: first 'foreach' of nested 'foreach-loop'
+
+foreach (my $i=0; $i <= 24; $i++) {
+
+# $i = COSMIC categories in the $ELEMENT-key
+# Manual step - copy and paste the appropriate categories into single quotes
+# Make sure to use the $ELEMENT-key at the top of the script correctly
+# $ELEMENT-key = COSMIC CATEGORIES
+
+my $ELEMENT = 'Gene name' if $i == 0;
+$ELEMENT = 'Accession Number' if $i == 1;
+$ELEMENT = 'HGNC ID' if $i == 2;
+$ELEMENT = 'Sample name' if $i == 3;
+$ELEMENT = 'ID_sample' if $i == 4;
+$ELEMENT = 'ID_tumour' if $i == 5;
+$ELEMENT = 'Primary site' if $i == 6;
+$ELEMENT = 'Site subtype' if $i == 7;
+$ELEMENT = 'Primary histology' if $i == 8;
+$ELEMENT = 'Histology subtype' if $i == 9;
+$ELEMENT = 'Genome-wide screen' if $i == 10;
+$ELEMENT = 'Mutation ID' if $i == 11;
+$ELEMENT = 'Mutation CDS' if $i == 12;
+$ELEMENT = 'Mutation AA' if $i == 13;
+$ELEMENT = 'Mutation Description' if $i == 14;
+$ELEMENT = 'Mutation zygosity' if $i == 15;
+$ELEMENT = 'Mutation NCBI36 genome position' if $i == 16;
+$ELEMENT = 'Mutation NCBI36 strand' if $i == 17;
+$ELEMENT = 'Mutation GRCh37 genome position' if $i == 18;
+$ELEMENT = 'Mutation GRCh37 strand' if $i == 19;
+$ELEMENT = 'Mutation somatic status' if $i == 20;
+$ELEMENT = 'Pubmed_PMID' if $i == 21;
+$ELEMENT = 'Sample source' if $i == 22;
+$ELEMENT = 'Tumour origin' if $i == 23;
+$ELEMENT = 'Comments' if $i == 24;
+
+
+# The $Element_Input-directory contains the entire 'CosmicCompleteExport_v65_200513.tsv' split into 5 files
+# You don't need to split the 'CosmicCompleteExport_v65_200513.tsv' if your computer is powerful enough
+# files with the .gsd extension (split 'CosmicCompleteExport_v65_200513.tsv') will be grepped
+# One can use alternative file extension on split COSMIC-downloads
+
+
+  opendir (DIR,"$Element_Input") or die "$!";
+	my @files = grep {/\.gsd$/}  readdir DIR; 
+
+
+# STEP2: second 'foreach' of nested 'foreach-loop'
+
+		foreach my $file (@files) {
+			open(IN,"$Element_Input$file") or die "$!";
+			open(OUT,">>$Element_Output$ELEMENT$txt") or die "$!";
+
+
+				select(OUT);
+
+					while (<IN>) {
+
+						my @REGEX = split /\t/;
+
+# ..unless part of the below 'print..' command helps avoid printing out the data-categories in the header line
+# if you want to print categories in the header line the get rid of the '..unless..' part of this print command
+			
+						print "$REGEX[$i]\n" unless m/^(Gene name|Accession Number|HGNC ID|Sample name|ID_sample|ID_tumour|Primary site|Site subtype|Primary histology|Histology subtype|Genome-wide screen|Mutation ID|Mutation CDS|Mutation AA|Mutation Description|Mutation zygosity|Mutation NCBI36 genome position|Mutation NCBI36 strand|Mutation GRCh37 genome position|Mutation GRCh37 strand|Mutation somatic status|Pubmed_PMID|Sample source|Tumour origin|Comments)/;
+
+
+						}
+
+				close(IN);
+				close(OUT);
+
+			}
+
+close(DIR);
+
+
+
+# STEP3: Remove redundancy, print out a non-redundant COSMIC element list
+
+open(IN2,"$Element_Output$ELEMENT$txt") or die "$!";
+open(OUT2,">>$Element_Output$NR$ELEMENT$txt") or die "$!";
+
+	select(OUT2);
+
+		my %seen;
+
+			while (<IN2>){
+
+		print if $seen{$_}++ == 0; # removes replicates, prints out singles
+
+
+	}
+
+close(IN2);
+close(OUT2);
+
+}

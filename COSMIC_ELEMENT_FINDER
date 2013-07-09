@@ -57,8 +57,8 @@ use File::Spec;
 # Enter your input directory in single quotes of my $Element_Input = ''
 # Enter your output directory in single quotes of my $Element_Output = ''
 
-my $Element_Input = 'C:/COSMIC/COSMIC_DOWNLOAD_06272013/';
-my $Element_Output = 'C:/COSMIC/TEST/';
+my $Element_Input = 'Define your input directory';
+my $Element_Output = 'Define your output directory';
 my $txt = '.txt';
 my $csv = '.csv';
 my $NR = 'NR_';

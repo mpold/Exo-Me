@@ -18,7 +18,7 @@ use File::Spec;
 # The below list, the $ELEMENT-key: [0]..[24] contains all COSMIC data-categories in 'CosmicCompleteExport_v65_200513.tsv'
 # All future COSMIC updates can be quickly broken down into single elements as well
 # The same basic script can be used on other databases as well. Just change the category names, and adjust the $i-values appropriately
-
+# Each $i = '[value] in $ELEMENT-key' generates a separate file for appropriate information
 
 #### THE $ELEMENT-KEY ####
 

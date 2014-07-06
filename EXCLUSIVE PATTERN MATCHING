@@ -27,6 +27,8 @@ my $Final = "Final_";
 
 # Have the regex/symbols/terms of inters in the parentheses below, all individually single-quoted
 # Use NEGATE_REGEX.pl to make the single-quoted array to be pasted in the parentheses below
+# the current @Symbol = (...) is just an example of single quoting the terms of your interest exclusively
+# paste as many terms into the @Symbol = (); 
 my @Symbol = ('ACINAR13','ACINAR01','ACINAR06','TCGA\-AA\-A00N\-01','TCGA\-BI\-A0VS\-01','TCGA\-CH\-5752\-01');
 
 foreach my $Symbol(@Symbol){
